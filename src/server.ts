@@ -6,4 +6,6 @@ const app = express();
 app.use(routes);
 
 
-app.listen(8080);
+const PORT = process.env.PORT || 8877
+
+app.listen(PORT);
