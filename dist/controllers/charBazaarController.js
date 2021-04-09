@@ -132,14 +132,14 @@ exports.default = {
                                         console.log(freatures);
                                         return ({
                                             name: name,
-                                            bid: bid,
-                                            freatures: freatures,
-                                            endDate: auctionEndDate,
                                             level: arrayInfomation[0],
                                             vocation: arrayInfomation[1],
                                             gender: arrayInfomation[2],
                                             world: arrayInfomation[3],
-                                            img: linkImg
+                                            bid: bid,
+                                            endDate: auctionEndDate,
+                                            img: linkImg,
+                                            freatures: freatures,
                                         });
                                     });
                                     return characterInformation;
