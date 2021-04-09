@@ -60,7 +60,7 @@ export default {
                                 vocation: arrayInfomation[1],
                                 gender: arrayInfomation[2],
                                 world: arrayInfomation[3],
-                                img: linkImg
+                                img: linkImg  
                             }); 
                     });
 
