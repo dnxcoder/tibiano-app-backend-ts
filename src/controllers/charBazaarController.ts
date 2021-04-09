@@ -19,7 +19,7 @@ export default {
             (async () => {
 
                 const browser = await puppeteer.launch({
-                    headless:true,
+                    headless: true,
                     args: ["--no-sandbox"]
                 });
                 const page = await browser.newPage();
@@ -46,6 +46,11 @@ export default {
 
                         const linkImg = item.querySelector('.AuctionOutfitImage').src
                         const name = item.querySelector('.AuctionCharacterName a').text;
+                        const bid = item.querySelector('.ShortAuctionDataValue:nth-child(2) b').innerText;
+                        var freatures = item.querySelectorAll('.Entry');
+                        freatures = Array.from(freatures);
+                        freatures = freatures.map((div: HTMLDivElement) => { return div.innerText })
+                        const auctionEndDate = item.querySelector('.AuctionTimer').innerText;
                         let stringInformation: string = item.querySelector('.AuctionHeader').innerText;
                         stringInformation = stringInformation.replace(/\n/gi, '');
                         stringInformation = stringInformation.replace(`${name}`, '');
@@ -54,14 +59,20 @@ export default {
                         stringInformation = stringInformation.replace('World: ', '');
                         const arrayInfomation = stringInformation.split('|');
 
+                        console.log(freatures);
+
                         return (
                             {
                                 name: name,
+                                bid: bid,
+                                freatures: freatures,
+                                endDate: auctionEndDate,
+                                level: arrayInfomation[0],
                                 vocation: arrayInfomation[1],
                                 gender: arrayInfomation[2],
                                 world: arrayInfomation[3],
-                                img: linkImg  
-                            }); 
+                                img: linkImg
+                            });
                     });
 
 

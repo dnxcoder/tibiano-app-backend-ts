@@ -117,6 +117,11 @@ exports.default = {
                                     var characterInformation = arrayAuction.map(function (item) {
                                         var linkImg = item.querySelector('.AuctionOutfitImage').src;
                                         var name = item.querySelector('.AuctionCharacterName a').text;
+                                        var bid = item.querySelector('.ShortAuctionDataValue:nth-child(2) b').innerText;
+                                        var freatures = item.querySelectorAll('.Entry');
+                                        freatures = Array.from(freatures);
+                                        freatures = freatures.map(function (div) { return div.innerText; });
+                                        var auctionEndDate = item.querySelector('.AuctionTimer').innerText;
                                         var stringInformation = item.querySelector('.AuctionHeader').innerText;
                                         stringInformation = stringInformation.replace(/\n/gi, '');
                                         stringInformation = stringInformation.replace("" + name, '');
@@ -124,8 +129,13 @@ exports.default = {
                                         stringInformation = stringInformation.replace('Vocation: ', '');
                                         stringInformation = stringInformation.replace('World: ', '');
                                         var arrayInfomation = stringInformation.split('|');
+                                        console.log(freatures);
                                         return ({
                                             name: name,
+                                            bid: bid,
+                                            freatures: freatures,
+                                            endDate: auctionEndDate,
+                                            level: arrayInfomation[0],
                                             vocation: arrayInfomation[1],
                                             gender: arrayInfomation[2],
                                             world: arrayInfomation[3],
