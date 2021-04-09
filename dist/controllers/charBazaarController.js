@@ -125,7 +125,7 @@ exports.default = {
                                         stringInformation = stringInformation.replace('World: ', '');
                                         var arrayInfomation = stringInformation.split('|');
                                         return ({
-                                            name: arrayInfomation[0],
+                                            name: name,
                                             vocation: arrayInfomation[1],
                                             gender: arrayInfomation[2],
                                             world: arrayInfomation[3],

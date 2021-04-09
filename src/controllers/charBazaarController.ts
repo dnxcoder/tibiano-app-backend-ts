@@ -56,7 +56,7 @@ export default {
 
                         return (
                             {
-                                name: arrayInfomation[0],
+                                name: name,
                                 vocation: arrayInfomation[1],
                                 gender: arrayInfomation[2],
                                 world: arrayInfomation[3],
