@@ -3,7 +3,8 @@ const router = Router();
 import charBazaarControler from './controllers/charBazaarController';
 
 
-router.get('/', (req,res)=>{ res.send('Welcome to Tibiano App Backend...')})
+router.get('/', (req,res)=>{ res.send('Welcome to Tibiano App Backend...')});
+router.post('/', (req,res)=>{res.send('Here im')});
 router.post('/searchCharBaazar', charBazaarControler.searchCharBaazar);
 
 
