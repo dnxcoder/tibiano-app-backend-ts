@@ -61,7 +61,7 @@ export default {
                                 gender: arrayInfomation[2],
                                 world: arrayInfomation[3],
                                 img: linkImg
-                            });
+                            }); 
                     });
 
 
