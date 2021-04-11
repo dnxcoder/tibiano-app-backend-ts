@@ -80,6 +80,7 @@ export default {
 
                 });
 
+                page.close();
                 res.send(JSON.stringify(characterInformation));
 
             })();

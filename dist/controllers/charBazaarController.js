@@ -146,6 +146,7 @@ exports.default = {
                                 })];
                         case 20:
                             characterInformation = _a.sent();
+                            page.close();
                             res.send(JSON.stringify(characterInformation));
                             return [2 /*return*/];
                     }
