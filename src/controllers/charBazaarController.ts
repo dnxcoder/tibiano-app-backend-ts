@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import puppeteer from 'puppeteer';
 import jsdom from 'jsdom';
+import moment from 'moment';
 
 import convertToSelectValues from '../functions/convertToSelectValues';
 
@@ -36,46 +37,50 @@ export default {
                 await page.waitForSelector('.Auction');
 
 
-                const characterInformation = await page.evaluate(() => {
+                const characterInformation:any = await page.evaluate(() => {
 
-                    const auctionContainer = document.querySelectorAll('.Auction');
+                    var auctionContainer: NodeList;
+                    auctionContainer = document.querySelectorAll('.Auction');
+
 
 
                     const arrayAuction = Array.from(auctionContainer);
+                    let characterInformation: any;
 
-                    const characterInformation: any = arrayAuction.map((item: any) => {
+                    if (arrayAuction.length != 0) {
 
-                        const linkImg = item.querySelector('.AuctionOutfitImage').src
-                        const name = item.querySelector('.AuctionCharacterName a').text;
-                        const bid = item.querySelector('.ShortAuctionDataValue:nth-child(2) b').innerText;
-                        var freatures = item.querySelectorAll('.Entry');
-                        freatures = Array.from(freatures);
-                        freatures = freatures.map((div: HTMLDivElement) => { return div.innerText })
-                        const auctionEndDate = item.querySelector('.AuctionTimer').innerText;
-                        let stringInformation: string = item.querySelector('.AuctionHeader').innerText;
-                        stringInformation = stringInformation.replace(/\n/gi, '');
-                        stringInformation = stringInformation.replace(`${name}`, '');
-                        stringInformation = stringInformation.replace('Level: ', '');
-                        stringInformation = stringInformation.replace('Vocation: ', '');
-                        stringInformation = stringInformation.replace('World: ', '');
-                        const arrayInfomation = stringInformation.split('|');
+                        characterInformation = arrayAuction.map((item: any) => {
 
-                        console.log(freatures);
+                            const linkImg = item.querySelector('.AuctionOutfitImage').src;
+                            const name = item.querySelector('.AuctionCharacterName a').text;
+                            const bid = item.querySelector('.ShortAuctionDataValue:nth-child(2) b').innerText;
+                            var freatures = item.querySelectorAll('.Entry');
+                            freatures = Array.from(freatures);
+                            freatures = freatures.map((div: HTMLDivElement) => { return div.innerText });
+                            const getAuctionEndTimeStamp = item.querySelector('.AuctionTimer').getAttribute('data-timestamp');
+                            let stringInformation: string = item.querySelector('.AuctionHeader').innerText;
+                            stringInformation = stringInformation.replace(/\n/gi, '');
+                            stringInformation = stringInformation.replace(`${name}`, '');
+                            stringInformation = stringInformation.replace('Level: ', '');
+                            stringInformation = stringInformation.replace('Vocation: ', '');
+                            stringInformation = stringInformation.replace('World: ', '');
+                            const arrayInfomation = stringInformation.split('|');
 
-                        return (
-                            {
-                                name: name,
-                                level: arrayInfomation[0],
-                                vocation: arrayInfomation[1],
-                                gender: arrayInfomation[2],
-                                world: arrayInfomation[3],
-                                bid: bid,
-                                endDate: auctionEndDate,
-                                img: linkImg,
-                                freatures: freatures,
-                            });
-                    });
 
+                            return (
+                                {
+                                    name: name,
+                                    level: arrayInfomation[0],
+                                    vocation: arrayInfomation[1],
+                                    gender: arrayInfomation[2],
+                                    world: arrayInfomation[3],
+                                    bid: bid,
+                                    endDate: getAuctionEndTimeStamp,
+                                    img: linkImg,
+                                    freatures: freatures,
+                                });
+                        });
+                    } else { characterInformation = null }
 
                     return characterInformation;
 
