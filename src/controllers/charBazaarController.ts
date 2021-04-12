@@ -30,10 +30,11 @@ export default {
                 if (skill) await page.select('select[name="filter_skillid"]', skillCode);
                 if (minlevel) await page.type('input[name="filter_levelrangefrom"]', minlevel);
                 if (maxlevel) await page.type('input[name="filter_levelrangeto"]', maxlevel);
-                if (minlevel) await page.type('input[name="filter_skillrangefrom"]', minskill);
+                if (minskill) await page.type('input[name="filter_skillrangefrom"]', minskill);
                 if (maxskill) await page.type('input[name="filter_skillrangeto"]', maxskill);
                 await page.click('input[value="Apply"]');
                 await page.waitForSelector('.Auction');
+
 
                 const characterInformation = await page.evaluate(() => {
 

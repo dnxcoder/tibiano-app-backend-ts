@@ -94,7 +94,7 @@ exports.default = {
                             _a.sent();
                             _a.label = 13;
                         case 13:
-                            if (!minlevel) return [3 /*break*/, 15];
+                            if (!minskill) return [3 /*break*/, 15];
                             return [4 /*yield*/, page.type('input[name="filter_skillrangefrom"]', minskill)];
                         case 14:
                             _a.sent();
