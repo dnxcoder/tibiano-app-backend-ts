@@ -1,11 +1,7 @@
 import { Request, Response } from 'express';
 import puppeteer from 'puppeteer';
-import jsdom from 'jsdom';
-import moment from 'moment';
 
 import convertToSelectValues from '../functions/convertToSelectValues';
-
-const { JSDOM } = jsdom;
 
 export default {
 
@@ -37,12 +33,10 @@ export default {
                 await page.waitForSelector('.Auction');
 
 
-                const characterInformation:any = await page.evaluate(() => {
+                const characterInformation: any = await page.evaluate(() => {
 
                     var auctionContainer: NodeList;
                     auctionContainer = document.querySelectorAll('.Auction');
-
-
 
                     const arrayAuction = Array.from(auctionContainer);
                     let characterInformation: any;
@@ -65,7 +59,6 @@ export default {
                             stringInformation = stringInformation.replace('Vocation: ', '');
                             stringInformation = stringInformation.replace('World: ', '');
                             const arrayInfomation = stringInformation.split('|');
-
 
                             return (
                                 {

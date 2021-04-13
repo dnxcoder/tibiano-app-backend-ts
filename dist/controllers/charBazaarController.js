@@ -40,9 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var puppeteer_1 = __importDefault(require("puppeteer"));
-var jsdom_1 = __importDefault(require("jsdom"));
 var convertToSelectValues_1 = __importDefault(require("../functions/convertToSelectValues"));
-var JSDOM = jsdom_1.default.JSDOM;
 exports.default = {
     searchCharBaazar: function (req, res) {
         var _a = req.body, world = _a.world, vocation = _a.vocation, skill = _a.skill, minskill = _a.minskill, maxskill = _a.maxskill, minlevel = _a.minlevel, maxlevel = _a.maxlevel;
