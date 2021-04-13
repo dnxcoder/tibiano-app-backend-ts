@@ -142,13 +142,18 @@ export default {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'
         }
 
+        const browserHeaders2 = {
+
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'
+        }
+
 
         //const monsterKindURL = `https://www.tibiawiki.com.br/wiki/${monsterName}`
 
-        const monsterKindURL = 'https://www.tibiawiki.com.br/wiki/Gigantes';
+        const monsterKindURL = `https://www.tibiawiki.com.br/wiki/${monsterName}`;
 
         const options = {
-            headers: browserHeaders
+            headers: browserHeaders2
         };
 
         axios.get(monsterKindURL, options)

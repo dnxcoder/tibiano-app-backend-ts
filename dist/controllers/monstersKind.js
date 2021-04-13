@@ -101,10 +101,13 @@ exports.default = {
             'upgrade-insecure-requests': '1',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'
         };
+        var browserHeaders2 = {
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'
+        };
         //const monsterKindURL = `https://www.tibiawiki.com.br/wiki/${monsterName}`
-        var monsterKindURL = 'https://www.tibiawiki.com.br/wiki/Gigantes';
+        var monsterKindURL = "https://www.tibiawiki.com.br/wiki/" + monsterName;
         var options = {
-            headers: browserHeaders
+            headers: browserHeaders2
         };
         axios_1.default.get(monsterKindURL, options)
             .then(function (response) {
