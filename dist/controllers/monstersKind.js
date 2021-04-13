@@ -85,7 +85,8 @@ exports.default = {
     },
     testePostMonsters: function (req, res) {
         var monsterName = req.body.monsterName;
-        var monsterKindURL = "https://www.tibiawiki.com.br/wiki/" + monsterName;
+        //const monsterKindURL = `https://www.tibiawiki.com.br/wiki/${monsterName}`
+        var monsterKindURL = 'https://www.tibiawiki.com.br/wiki/Gigantes';
         got_1.default(monsterKindURL)
             .then(function (response) {
             var allDomPage = new JSDOM(response.body.toString()).window.document;

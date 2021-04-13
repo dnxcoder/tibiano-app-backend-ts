@@ -125,9 +125,9 @@ export default {
         const { monsterName } = req.body;
 
 
-        const monsterKindURL = `https://www.tibiawiki.com.br/wiki/${monsterName}`
+        //const monsterKindURL = `https://www.tibiawiki.com.br/wiki/${monsterName}`
 
-
+        const monsterKindURL = 'https://www.tibiawiki.com.br/wiki/Gigantes';
 
         got(monsterKindURL)
             .then(response => {
