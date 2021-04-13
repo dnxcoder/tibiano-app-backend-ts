@@ -77,5 +77,9 @@ exports.default = {
         catch (error) {
             console.log('Aconteceu este erro aqui: ' + error);
         }
+    },
+    testGetMonsters: function (req, res) {
+        var monsterName = req.query.monsterName;
+        res.json("Aqui esta o nome do monstro: " + monsterName);
     }
 };

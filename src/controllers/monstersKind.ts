@@ -107,6 +107,16 @@ export default {
         } catch (error) {
             console.log('Aconteceu este erro aqui: ' + error);
         }
+    },
+
+    testGetMonsters: (req: Request, res: Response) => {
+
+
+        const { monsterName } = req.query;
+
+        res.json(`Aqui esta o nome do monstro: ${monsterName}`)
+
+
     }
 
 

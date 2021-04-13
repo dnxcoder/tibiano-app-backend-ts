@@ -12,6 +12,7 @@ router.post('/', (req,res)=>{res.send('Here im')});
 router.post('/searchCharBaazar', charBazaarControler.searchCharBaazar);
 
 router.get('/monstersKind', monstersKind.getMonstersOfKind);
+router.get('/getMonsterName', monstersKind.testGetMonsters);
 
 
 
