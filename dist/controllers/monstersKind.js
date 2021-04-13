@@ -80,6 +80,7 @@ exports.default = {
     },
     testGetMonsters: function (req, res) {
         var monsterName = req.query.monsterName;
-        res.json("Aqui esta o nome do monstro: " + monsterName);
+        res.send(monsterName);
+        //res.json(`Aqui esta o nome do monstro: ${monsterName}`)
     }
 };

@@ -114,7 +114,8 @@ export default {
 
         const { monsterName } = req.query;
 
-        res.json(`Aqui esta o nome do monstro: ${monsterName}`)
+        res.send(monsterName)
+        //res.json(`Aqui esta o nome do monstro: ${monsterName}`)
 
 
     }
