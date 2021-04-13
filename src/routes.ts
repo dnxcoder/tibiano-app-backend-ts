@@ -15,5 +15,8 @@ router.get('/monstersKind', monstersKind.getMonstersOfKind);
 router.get('/getMonsterName', monstersKind.testGetMonsters);
 
 
+router.post('/postMonsterName', monstersKind.testePostMonsters);
+
+
 
 export default router;
