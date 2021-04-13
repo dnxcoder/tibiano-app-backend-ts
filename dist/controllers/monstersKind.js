@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var got_1 = __importDefault(require("got"));
 var jsdom_1 = __importDefault(require("jsdom"));
+var axios_1 = __importDefault(require("axios"));
 var JSDOM = jsdom_1.default.JSDOM;
 exports.default = {
     getMonstersOfKind: function (req, res) {
@@ -87,9 +88,9 @@ exports.default = {
         var monsterName = req.body.monsterName;
         //const monsterKindURL = `https://www.tibiawiki.com.br/wiki/${monsterName}`
         var monsterKindURL = 'https://www.tibiawiki.com.br/wiki/Gigantes';
-        got_1.default(monsterKindURL)
+        axios_1.default.get(monsterKindURL)
             .then(function (response) {
-            var allDomPage = new JSDOM(response.body.toString()).window.document;
+            var allDomPage = new JSDOM(response.data.toString()).window.document;
             var tableMonsters = allDomPage.querySelector('.sortable');
             var linesFromTableMonster = tableMonsters === null || tableMonsters === void 0 ? void 0 : tableMonsters.querySelectorAll('tr');
             var charactersInfoArray;

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import got from 'got';
 import jsdom from 'jsdom';
+import axios from 'axios';
 
 
 const { JSDOM } = jsdom;
@@ -129,10 +130,10 @@ export default {
 
         const monsterKindURL = 'https://www.tibiawiki.com.br/wiki/Gigantes';
 
-        got(monsterKindURL)
+        axios.get(monsterKindURL)
             .then(response => {
 
-                const allDomPage = new JSDOM(response.body.toString()).window.document;
+                const allDomPage = new JSDOM(response.data.toString()).window.document;
                 const tableMonsters = allDomPage.querySelector('.sortable');
                 const linesFromTableMonster = tableMonsters?.querySelectorAll('tr');
                 var charactersInfoArray: any;
