@@ -70,7 +70,7 @@ exports.default = {
                     });
                 });
             charactersInfoArray.shift();
-            res.send(charactersInfoArray);
+            res.send(JSON.stringify(charactersInfoArray));
         });
     }
 };
