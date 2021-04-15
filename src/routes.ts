@@ -5,17 +5,20 @@ import monstersKind from './controllers/monstersKind';
 
 
 
-router.get('/', (req,res)=>{ res.send('Welcome to Tibiano App Backend...')});
-router.post('/', (req,res)=>{res.send('Here im')});
+router.get('/', (req, res) => { res.send('Welcome to Tibiano App Backend...') });
+router.post('/', (req, res) => { res.send('Here im') });
 
 
 router.post('/searchCharBaazar', charBazaarControler.searchCharBaazar);
 
+
+
 router.get('/monstersKind', monstersKind.getMonstersOfKind);
-router.get('/getMonsterName', monstersKind.testGetMonsters);
+router.get('/generateJsonTypesOfMonster', monstersKind.generateJsonTypesOfMonster);
+router.post('/getDetailsMonster', monstersKind.getDetailsMonster);
 
 
-router.post('/postMonsterName', monstersKind.testePostMonsters);
+
 
 
 

@@ -11,6 +11,6 @@ router.get('/', function (req, res) { res.send('Welcome to Tibiano App Backend..
 router.post('/', function (req, res) { res.send('Here im'); });
 router.post('/searchCharBaazar', charBazaarController_1.default.searchCharBaazar);
 router.get('/monstersKind', monstersKind_1.default.getMonstersOfKind);
-router.get('/getMonsterName', monstersKind_1.default.testGetMonsters);
-router.post('/postMonsterName', monstersKind_1.default.testePostMonsters);
+router.get('/generateJsonTypesOfMonster', monstersKind_1.default.generateJsonTypesOfMonster);
+router.post('/getDetailsMonster', monstersKind_1.default.getDetailsMonster);
 exports.default = router;

@@ -42,7 +42,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var got_1 = __importDefault(require("got"));
 var jsdom_1 = __importDefault(require("jsdom"));
 var axios_1 = __importDefault(require("axios"));
-var puppeteer_1 = __importDefault(require("puppeteer"));
+var fs_1 = __importDefault(require("fs"));
 var JSDOM = jsdom_1.default.JSDOM;
 exports.default = {
     getMonstersOfKind: function (req, res) {
@@ -116,180 +116,193 @@ exports.default = {
             console.log('Aconteceu este erro aqui: ' + error);
         }
     },
-    testGetMonsters: function (req, res) {
-        var monsterName = req.query.monsterName;
-        (function () { return __awaiter(void 0, void 0, void 0, function () {
-            var browser, page, monsterInformation;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, puppeteer_1.default.launch({
-                            headless: true,
-                            args: ["--no-sandbox"]
-                        })];
-                    case 1:
-                        browser = _a.sent();
-                        return [4 /*yield*/, browser.newPage()];
-                    case 2:
-                        page = _a.sent();
-                        return [4 /*yield*/, page.goto("https://www.tibiawiki.com.br/wiki/" + monsterName)];
-                    case 3:
-                        _a.sent();
-                        return [4 /*yield*/, page.evaluate(function () {
-                                var tableMonsters = document.querySelector('.sortable');
-                                var linesFromTableMonster = tableMonsters === null || tableMonsters === void 0 ? void 0 : tableMonsters.querySelectorAll('tr');
-                                var charactersInfoArray;
-                                if (linesFromTableMonster)
-                                    charactersInfoArray = Array.from(linesFromTableMonster).map(function (line) {
-                                        var linkImgFiltered = '';
-                                        var nameMonsterFiltered = '';
-                                        var hpFiltered = '';
-                                        var xpFiltered = '';
-                                        var charmFiltered = '';
-                                        var monsterName = line.querySelector('td:nth-child(1) a');
-                                        if (monsterName)
-                                            nameMonsterFiltered = monsterName === null || monsterName === void 0 ? void 0 : monsterName.innerHTML;
-                                        var linkImg = line.querySelector('td:nth-child(2)');
-                                        if (linkImg)
-                                            linkImg = linkImg === null || linkImg === void 0 ? void 0 : linkImg.querySelector('img');
-                                        if (linkImg)
-                                            linkImgFiltered = "https://tibiawiki.com.br/" + linkImg.getAttribute('src');
-                                        var hpColumn = line.querySelector('td:nth-child(3) ');
-                                        var aFromhpColumn = line.querySelector('td:nth-child(3) a');
-                                        if (aFromhpColumn) {
-                                            if (hpColumn) {
-                                                hpColumn.removeChild(aFromhpColumn);
-                                                hpFiltered = hpColumn.innerHTML;
-                                                hpFiltered = hpColumn.innerHTML.replace(/\n/g, '');
-                                                hpFiltered = hpFiltered.replace(' ', '');
+    generateJsonTypesOfMonster: function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var allMonsters, cont, typeOfMonsters;
+        return __generator(this, function (_a) {
+            allMonsters = [];
+            cont = 0;
+            typeOfMonsters = ['Anfíbios', 'Aquáticos', 'Aves', 'Constructos', 'Criaturas_Mágicas', 'Demônios', 'Dragões', 'Elementais',
+                'Extra_Dimensionais', 'Fadas', 'Gigantes', 'Humanóides', 'Humanos', 'Licantropos', 'Mamíferos', 'Mortos-Vivos',
+                'Répteis', 'Slimes'];
+            typeOfMonsters.map(function (typeOfMonster, index) { return __awaiter(void 0, void 0, void 0, function () {
+                var url, monstersEpecificType, contentFilePath, contentString;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            url = "https://www.tibiawiki.com.br/wiki/" + typeOfMonster;
+                            return [4 /*yield*/, axios_1.default.get(url)
+                                    .then(function (response) {
+                                    var allDomPage = new JSDOM(response.data.toString()).window.document;
+                                    var tableMonsters = allDomPage.querySelector('.sortable');
+                                    var linesFromTableMonster = tableMonsters === null || tableMonsters === void 0 ? void 0 : tableMonsters.querySelectorAll('tr');
+                                    var charactersInfoArray;
+                                    if (linesFromTableMonster)
+                                        charactersInfoArray = Array.from(linesFromTableMonster).map(function (line) {
+                                            var linkImgFiltered = '';
+                                            var nameMonsterFiltered = '';
+                                            var hpFiltered = '';
+                                            var xpFiltered = '';
+                                            var charmFiltered = '';
+                                            var monsterName = line.querySelector('td:nth-child(1) a');
+                                            if (monsterName)
+                                                nameMonsterFiltered = monsterName === null || monsterName === void 0 ? void 0 : monsterName.innerHTML;
+                                            var linkImg = line.querySelector('td:nth-child(2)');
+                                            if (linkImg)
+                                                linkImg = linkImg === null || linkImg === void 0 ? void 0 : linkImg.querySelector('img');
+                                            if (linkImg)
+                                                linkImgFiltered = "https://tibiawiki.com.br/" + linkImg.getAttribute('src');
+                                            var hpColumn = line.querySelector('td:nth-child(3) ');
+                                            var aFromhpColumn = line.querySelector('td:nth-child(3) a');
+                                            if (aFromhpColumn) {
+                                                if (hpColumn) {
+                                                    hpColumn.removeChild(aFromhpColumn);
+                                                    hpFiltered = hpColumn.innerHTML;
+                                                    hpFiltered = hpColumn.innerHTML.replace(/\n/g, '');
+                                                    hpFiltered = hpFiltered.replace(' ', '');
+                                                }
                                             }
-                                        }
-                                        var xpColumn = line.querySelector('td:nth-child(4) ');
-                                        var aFromXpColumn = line.querySelector('td:nth-child(4) a');
-                                        if (aFromXpColumn) {
-                                            if (xpColumn) {
-                                                xpColumn.removeChild(aFromXpColumn);
-                                                xpFiltered = xpColumn.innerHTML;
-                                                xpFiltered = xpFiltered.replace(/\n/g, ' ');
-                                                xpFiltered = xpFiltered.replace(/ /g, '');
+                                            var xpColumn = line.querySelector('td:nth-child(4) ');
+                                            var aFromXpColumn = line.querySelector('td:nth-child(4) a');
+                                            if (aFromXpColumn) {
+                                                if (xpColumn) {
+                                                    xpColumn.removeChild(aFromXpColumn);
+                                                    xpFiltered = xpColumn.innerHTML;
+                                                    xpFiltered = xpFiltered.replace(/\n/g, ' ');
+                                                    xpFiltered = xpFiltered.replace(/ /g, '');
+                                                }
                                             }
-                                        }
-                                        var charmColumn = line.querySelector('td:nth-child(5)');
-                                        var aCharmColum = line.querySelector('td:nth-child(5) a');
-                                        if (aCharmColum) {
-                                            if (charmColumn) {
-                                                charmColumn.removeChild(aCharmColum);
-                                                charmFiltered = charmColumn.innerHTML;
-                                                charmFiltered = charmFiltered.replace(/\n/g, '');
-                                                charmFiltered = charmFiltered.replace(/ /g, '');
+                                            var charmColumn = line.querySelector('td:nth-child(5)');
+                                            var aCharmColum = line.querySelector('td:nth-child(5) a');
+                                            if (aCharmColum) {
+                                                if (charmColumn) {
+                                                    charmColumn.removeChild(aCharmColum);
+                                                    charmFiltered = charmColumn.innerHTML;
+                                                    charmFiltered = charmFiltered.replace(/\n/g, '');
+                                                    charmFiltered = charmFiltered.replace(/ /g, '');
+                                                }
                                             }
-                                        }
-                                        return ({
-                                            name: nameMonsterFiltered,
-                                            hp: hpFiltered,
-                                            xp: xpFiltered,
-                                            charm: charmFiltered,
-                                            link: linkImgFiltered
+                                            return ({
+                                                type: typeOfMonster,
+                                                name: nameMonsterFiltered,
+                                                hp: hpFiltered,
+                                                xp: xpFiltered,
+                                                charm: charmFiltered,
+                                                link: linkImgFiltered
+                                            });
                                         });
-                                    });
-                                charactersInfoArray.shift();
-                                return charactersInfoArray;
-                            })];
-                    case 4:
-                        monsterInformation = _a.sent();
-                        res.send(monsterInformation);
-                        return [2 /*return*/];
-                }
-            });
-        }); })();
-    },
-    testePostMonsters: function (req, res) {
-        var monsterName = req.body.monsterName;
-        var browserHeaders = {
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-            'accept-encoding': 'gzip, deflate, br',
-            'accept-language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-            'cache-control': 'max-age=0',
-            'cookie': 'sempre-mostrar-spoilers=true; denakop_freq={}; nvg46575=d06e62ae84e470b4177b4e5d309|0_98; __cfduid=d70d651d54de6b6618935b6826d9f50631618267554; __utmz=183949219.1618294104.80.66.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); __utmc=183949219; __gads=undefined; __utma=183949219.871223446.1608257887.1618336245.1618343462.82; __utmt=1; __cf_bm=f0cdf1ac099ac4aa24aa8ca7556e02b5e01d1fc0-1618343464-1800-AWM2nSJyCVyXes+TI5+ZAQzQiB89TEGQlr+Bnovpp49PGEk5D8X08uOR0x3uYk/aHu8PZVoVcOfsRBU+BFZ94kEBEYsRZVpuweLvSgXL35V30afDTs6nsQKq2kq0AxGmyQ==; __utmb=183949219.1.10.1618343462; __gads=ID=466b6aa7ec3d8a97:T=1618343466:S=ALNI_MaDMOYUCg6utcr8S8TS3Dc7tgqulw',
-            'sec-ch-ua': '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
-            'sec-ch-ua-mobile': '?0',
-            'sec-fetch-dest': 'document',
-            'sec-fetch-mode': 'navigate',
-            'sec-fetch-site': 'none',
-            'sec-fetch-user': '?1',
-            'upgrade-insecure-requests': '1',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'
-        };
-        var browserHeaders2 = {
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'
-        };
-        //const monsterKindURL = `https://www.tibiawiki.com.br/wiki/${monsterName}`
-        var monsterKindURL = "https://www.tibiawiki.com.br/wiki/" + monsterName;
-        var options = {
-            headers: browserHeaders2
-        };
-        axios_1.default.get(monsterKindURL, options)
-            .then(function (response) {
-            var allDomPage = new JSDOM(response.data.toString()).window.document;
-            var tableMonsters = allDomPage.querySelector('.sortable');
-            var linesFromTableMonster = tableMonsters === null || tableMonsters === void 0 ? void 0 : tableMonsters.querySelectorAll('tr');
-            var charactersInfoArray;
-            if (linesFromTableMonster)
-                charactersInfoArray = Array.from(linesFromTableMonster).map(function (line) {
-                    var linkImgFiltered = '';
-                    var nameMonsterFiltered = '';
-                    var hpFiltered = '';
-                    var xpFiltered = '';
-                    var charmFiltered = '';
-                    var monsterName = line.querySelector('td:nth-child(1) a');
-                    if (monsterName)
-                        nameMonsterFiltered = monsterName === null || monsterName === void 0 ? void 0 : monsterName.innerHTML;
-                    var linkImg = line.querySelector('td:nth-child(2)');
-                    if (linkImg)
-                        linkImg = linkImg === null || linkImg === void 0 ? void 0 : linkImg.querySelector('img');
-                    if (linkImg)
-                        linkImgFiltered = "https://tibiawiki.com.br/" + linkImg.getAttribute('src');
-                    var hpColumn = line.querySelector('td:nth-child(3) ');
-                    var aFromhpColumn = line.querySelector('td:nth-child(3) a');
-                    if (aFromhpColumn) {
-                        if (hpColumn) {
-                            hpColumn.removeChild(aFromhpColumn);
-                            hpFiltered = hpColumn.innerHTML;
-                            hpFiltered = hpColumn.innerHTML.replace(/\n/g, '');
-                            hpFiltered = hpFiltered.replace(' ', '');
-                        }
+                                    charactersInfoArray.shift();
+                                    return charactersInfoArray;
+                                }).catch(function (error) {
+                                    res.send('Este é o erro encontrado : ' + error);
+                                })];
+                        case 1:
+                            monstersEpecificType = _a.sent();
+                            allMonsters = allMonsters.concat(monstersEpecificType);
+                            cont++;
+                            if (typeOfMonsters.length === cont) {
+                                contentFilePath = './src/generated/monsters.json';
+                                contentString = JSON.stringify(allMonsters);
+                                fs_1.default.writeFileSync(contentFilePath, contentString);
+                                res.json(allMonsters);
+                            }
+                            return [2 /*return*/];
                     }
-                    var xpColumn = line.querySelector('td:nth-child(4) ');
-                    var aFromXpColumn = line.querySelector('td:nth-child(4) a');
-                    if (aFromXpColumn) {
-                        if (xpColumn) {
-                            xpColumn.removeChild(aFromXpColumn);
-                            xpFiltered = xpColumn.innerHTML;
-                            xpFiltered = xpFiltered.replace(/\n/g, ' ');
-                            xpFiltered = xpFiltered.replace(/ /g, '');
-                        }
-                    }
-                    var charmColumn = line.querySelector('td:nth-child(5)');
-                    var aCharmColum = line.querySelector('td:nth-child(5) a');
-                    if (aCharmColum) {
-                        if (charmColumn) {
-                            charmColumn.removeChild(aCharmColum);
-                            charmFiltered = charmColumn.innerHTML;
-                            charmFiltered = charmFiltered.replace(/\n/g, '');
-                            charmFiltered = charmFiltered.replace(/ /g, '');
-                        }
-                    }
-                    return ({
-                        name: nameMonsterFiltered,
-                        hp: hpFiltered,
-                        xp: xpFiltered,
-                        charm: charmFiltered,
-                        link: linkImgFiltered
-                    });
                 });
-            charactersInfoArray.shift();
-            res.json(charactersInfoArray);
-        }).catch(function (error) {
-            res.send('Este é o erro encontrado : ' + error);
+            }); });
+            return [2 /*return*/];
         });
-    },
+    }); },
+    getDetailsMonster: function (req, res) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u;
+        var imgLink = '';
+        var nameMonster = '';
+        var hp = '';
+        var speed = '';
+        var xp = '';
+        var armor = '';
+        var charms = '';
+        var phisic = '';
+        var earth = '';
+        var fire = '';
+        var death = '';
+        var energy = '';
+        var holy = '';
+        var ice = '';
+        var health = '';
+        var comportament = '';
+        var localization = '';
+        var sounds = '';
+        var loot = '';
+        var story = '';
+        var story2 = '';
+        var html = req.body.html;
+        var allDomPage = new JSDOM(html.toString()).window.document;
+        var tableInfoBox = allDomPage.querySelector('.infobox');
+        var rowInformation = tableInfoBox === null || tableInfoBox === void 0 ? void 0 : tableInfoBox.querySelector('tr');
+        var imgDrag = rowInformation === null || rowInformation === void 0 ? void 0 : rowInformation.querySelector('td img');
+        imgLink = "https://www.tibiawiki.com.br" + (imgDrag === null || imgDrag === void 0 ? void 0 : imgDrag.getAttribute('src'));
+        var tableName = rowInformation === null || rowInformation === void 0 ? void 0 : rowInformation.querySelector('table');
+        nameMonster = "" + ((_a = tableName === null || tableName === void 0 ? void 0 : tableName.querySelector('tr td font')) === null || _a === void 0 ? void 0 : _a.innerHTML);
+        hp = "" + ((_b = tableName === null || tableName === void 0 ? void 0 : tableName.querySelector('tr:nth-child(2) td')) === null || _b === void 0 ? void 0 : _b.textContent);
+        speed = "" + ((_c = tableName === null || tableName === void 0 ? void 0 : tableName.querySelector('tr:nth-child(2) td:nth-child(2)')) === null || _c === void 0 ? void 0 : _c.textContent);
+        xp = "" + ((_d = tableName === null || tableName === void 0 ? void 0 : tableName.querySelector('tr:nth-child(3) td:nth-child(1)')) === null || _d === void 0 ? void 0 : _d.textContent);
+        armor = "" + ((_e = tableName === null || tableName === void 0 ? void 0 : tableName.querySelector('tr:nth-child(3) td:nth-child(2)')) === null || _e === void 0 ? void 0 : _e.textContent);
+        charms = "" + ((_f = tableName === null || tableName === void 0 ? void 0 : tableName.querySelector('tr:nth-child(4) td:nth-child(1)')) === null || _f === void 0 ? void 0 : _f.textContent);
+        var tableElementals = rowInformation === null || rowInformation === void 0 ? void 0 : rowInformation.querySelector('td:nth-child(3) table');
+        phisic = "" + ((_g = tableElementals === null || tableElementals === void 0 ? void 0 : tableElementals.querySelector('table:nth-child(1) tr:nth-child(2) td:nth-child(1)')) === null || _g === void 0 ? void 0 : _g.textContent);
+        phisic = phisic.replace(/Neutro a Físico/g, '').replace(/Forte a Físico/g, '').replace(/Fraco a Físico/g, '')
+            .replace(/Imune a Físico/g, '');
+        earth = "" + ((_h = tableElementals === null || tableElementals === void 0 ? void 0 : tableElementals.querySelector('table:nth-child(1) tr:nth-child(2) td:nth-child(2)')) === null || _h === void 0 ? void 0 : _h.textContent);
+        earth = earth.replace(/Neutro a Terra/g, '').replace(/Forte a Terra/g, '').replace(/Fraco a Terra/g, '')
+            .replace(/Imune a Terra/g, '');
+        fire = "" + ((_j = tableElementals === null || tableElementals === void 0 ? void 0 : tableElementals.querySelector('table:nth-child(1) tr:nth-child(2) td:nth-child(3)')) === null || _j === void 0 ? void 0 : _j.textContent);
+        fire = fire.replace(/Neutro a Fogo/g, '').replace(/Forte a Fogo/g, '').replace(/Fraco a Fogo/g, '')
+            .replace(/Imune a Fogo/g, '');
+        death = "" + ((_k = tableElementals === null || tableElementals === void 0 ? void 0 : tableElementals.querySelector('table:nth-child(1) tr:nth-child(2) td:nth-child(4)')) === null || _k === void 0 ? void 0 : _k.textContent);
+        death = death.replace(/Neutro a Morte/g, '').replace(/Forte a Morte/g, '').replace(/Fraco a Morte/g, '')
+            .replace(/Imune a Morte/g, '');
+        energy = "" + ((_l = tableElementals === null || tableElementals === void 0 ? void 0 : tableElementals.querySelector('tr:nth-child(2) table tr:nth-child(2) td:nth-child(1)')) === null || _l === void 0 ? void 0 : _l.textContent);
+        energy = energy.replace(/Neutro a Energia/g, '').replace(/Forte a Energia/g, '').replace(/Fraco a Energia/g, '')
+            .replace(/Imune a Energia/g, '');
+        holy = "" + ((_m = tableElementals === null || tableElementals === void 0 ? void 0 : tableElementals.querySelector('tr:nth-child(2) table tr:nth-child(2) td:nth-child(2)')) === null || _m === void 0 ? void 0 : _m.textContent);
+        holy = holy.replace(/Neutro a Sagrado/g, '').replace(/Forte a Sagrado/g, '').replace(/Fraco a Sagrado/g, '')
+            .replace(/Imune a Sagrado/g, '');
+        ice = "" + ((_o = tableElementals === null || tableElementals === void 0 ? void 0 : tableElementals.querySelector('tr:nth-child(2) table tr:nth-child(2) td:nth-child(3)')) === null || _o === void 0 ? void 0 : _o.textContent);
+        ice = ice.replace(/Neutro a Gelo/g, '').replace(/Forte a Gelo/g, '').replace(/Fraco a Gelo/g, '')
+            .replace(/Imune a Gelo/g, '');
+        health = "" + ((_p = tableElementals === null || tableElementals === void 0 ? void 0 : tableElementals.querySelector('tr:nth-child(2) table tr:nth-child(2) td:nth-child(4)')) === null || _p === void 0 ? void 0 : _p.textContent);
+        health = health.replace(/Neutro a Cura/g, '').replace(/Forte a Cura/g, '').replace(/Fraco a Cura/g, '')
+            .replace(/Imune a Cura/g, '');
+        comportament = "" + ((_q = tableInfoBox === null || tableInfoBox === void 0 ? void 0 : tableInfoBox.querySelector('tbody tr:nth-child(8)')) === null || _q === void 0 ? void 0 : _q.textContent);
+        localization = "" + ((_r = tableInfoBox === null || tableInfoBox === void 0 ? void 0 : tableInfoBox.querySelector('tbody tr:nth-child(9)')) === null || _r === void 0 ? void 0 : _r.textContent);
+        sounds = "" + ((_s = tableInfoBox === null || tableInfoBox === void 0 ? void 0 : tableInfoBox.querySelector('tbody tr:nth-child(11)')) === null || _s === void 0 ? void 0 : _s.textContent);
+        //loot = `${tableInfoBox?.querySelector('tbody tr:nth-child(12) td:nth-child(2)')?.textContent}`;
+        //story = `${tableInfoBox?.querySelector('tbody tr:nth-child(16)')?.textContent}`;
+        //localization = `${tableInfoBox?.querySelector('td[colspan="3"][style="padding-left: 4px;"]')?.innerHTML}`
+        //sounds = `${tableInfoBox?.querySelector('td[colspan="3"][style="padding-left: 4px;"]')?.textContent}`
+        loot = "" + ((_t = tableInfoBox === null || tableInfoBox === void 0 ? void 0 : tableInfoBox.querySelector('td[colspan="3"][style="border-bottom:1px dotted #CCCCCC;padding-left: 4px;"]')) === null || _t === void 0 ? void 0 : _t.textContent);
+        story = "" + ((_u = tableInfoBox === null || tableInfoBox === void 0 ? void 0 : tableInfoBox.querySelector('div[style="font-family: Courier New, Courier, Arial Sans Unicode, Arial; color: #000; overflow: auto; white-space: auto;"]')) === null || _u === void 0 ? void 0 : _u.textContent);
+        console.log(localization);
+        res.json({
+            imgLink: imgLink,
+            hp: hp,
+            xp: xp,
+            speed: speed,
+            armor: armor,
+            charms: charms,
+            phisic: phisic,
+            earth: earth,
+            fire: fire,
+            death: death,
+            energy: energy,
+            holy: holy,
+            ice: ice,
+            health: health,
+            comportament: comportament,
+            localization: localization,
+            sounds: sounds,
+            loot: loot,
+            story: story,
+        });
+    }
 };

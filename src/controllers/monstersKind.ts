@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import got from 'got';
 import jsdom from 'jsdom';
 import axios from 'axios';
+import fs from 'fs';
 
 import puppeteer from 'puppeteer';
 
@@ -112,224 +113,232 @@ export default {
         }
     },
 
-    testGetMonsters: (req: Request, res: Response) => {
 
 
-        const { monsterName } = req.query;
+    generateJsonTypesOfMonster: async (req: Request, res: Response) => {
 
-        (async () => {
+        let allMonsters: any = [];
+        let cont = 0;
 
-            const browser = await puppeteer.launch({
-                headless: true,
-                args: ["--no-sandbox"]
-            });
-            const page = await browser.newPage();
-            await page.goto(`https://www.tibiawiki.com.br/wiki/${monsterName}`);
-
-            const monsterInformation: any = await page.evaluate(() => {
-
-                const tableMonsters = document.querySelector('.sortable');
-                const linesFromTableMonster = tableMonsters?.querySelectorAll('tr');
-                var charactersInfoArray: any;
+        const typeOfMonsters = ['Anfíbios', 'Aquáticos', 'Aves', 'Constructos', 'Criaturas_Mágicas', 'Demônios', 'Dragões', 'Elementais',
+            'Extra_Dimensionais', 'Fadas', 'Gigantes', 'Humanóides', 'Humanos', 'Licantropos', 'Mamíferos', 'Mortos-Vivos',
+            'Répteis', 'Slimes'];
 
 
-                if (linesFromTableMonster) charactersInfoArray = Array.from(linesFromTableMonster).map((line) => {
+        typeOfMonsters.map(async (typeOfMonster, index) => {
 
 
-                    let linkImgFiltered: string = '';
-                    let nameMonsterFiltered: string = '';
-                    let hpFiltered: string = '';
-                    let xpFiltered: string = '';
-                    let charmFiltered: string = '';
+            const url = `https://www.tibiawiki.com.br/wiki/${typeOfMonster}`
 
 
-                    var monsterName = line.querySelector('td:nth-child(1) a');
-                    if (monsterName) nameMonsterFiltered = monsterName?.innerHTML;
+            const monstersEpecificType = await axios.get(url)
+                .then(response => {
 
-                    var linkImg = line.querySelector('td:nth-child(2)');
-                    if (linkImg) linkImg = linkImg?.querySelector('img');
-                    if (linkImg) linkImgFiltered = `https://tibiawiki.com.br/${linkImg.getAttribute('src')}`;
+                    const allDomPage = new JSDOM(response.data.toString()).window.document;
+                    const tableMonsters = allDomPage.querySelector('.sortable');
+                    const linesFromTableMonster = tableMonsters?.querySelectorAll('tr');
+                    var charactersInfoArray: any;
 
 
-                    var hpColumn = line.querySelector('td:nth-child(3) ');
-                    var aFromhpColumn = line.querySelector('td:nth-child(3) a');
+                    if (linesFromTableMonster) charactersInfoArray = Array.from(linesFromTableMonster).map((line) => {
 
-                    if (aFromhpColumn) {
-                        if (hpColumn) {
-                            hpColumn.removeChild(aFromhpColumn);
-                            hpFiltered = hpColumn.innerHTML;
-                            hpFiltered = hpColumn.innerHTML.replace(/\n/g, '');
-                            hpFiltered = hpFiltered.replace(' ', '');
+
+                        let linkImgFiltered: string = '';
+                        let nameMonsterFiltered: string = '';
+                        let hpFiltered: string = '';
+                        let xpFiltered: string = '';
+                        let charmFiltered: string = '';
+
+
+                        var monsterName = line.querySelector('td:nth-child(1) a');
+                        if (monsterName) nameMonsterFiltered = monsterName?.innerHTML;
+
+                        var linkImg = line.querySelector('td:nth-child(2)');
+                        if (linkImg) linkImg = linkImg?.querySelector('img');
+                        if (linkImg) linkImgFiltered = `https://tibiawiki.com.br/${linkImg.getAttribute('src')}`;
+
+
+                        var hpColumn = line.querySelector('td:nth-child(3) ');
+                        var aFromhpColumn = line.querySelector('td:nth-child(3) a');
+
+                        if (aFromhpColumn) {
+                            if (hpColumn) {
+                                hpColumn.removeChild(aFromhpColumn);
+                                hpFiltered = hpColumn.innerHTML;
+                                hpFiltered = hpColumn.innerHTML.replace(/\n/g, '');
+                                hpFiltered = hpFiltered.replace(' ', '');
+                            }
                         }
-                    }
 
-                    var xpColumn = line.querySelector('td:nth-child(4) ');
-                    var aFromXpColumn = line.querySelector('td:nth-child(4) a');
+                        var xpColumn = line.querySelector('td:nth-child(4) ');
+                        var aFromXpColumn = line.querySelector('td:nth-child(4) a');
 
-                    if (aFromXpColumn) {
-                        if (xpColumn) {
-                            xpColumn.removeChild(aFromXpColumn);
-                            xpFiltered = xpColumn.innerHTML;
-                            xpFiltered = xpFiltered.replace(/\n/g, ' ');
-                            xpFiltered = xpFiltered.replace(/ /g, '');
+                        if (aFromXpColumn) {
+                            if (xpColumn) {
+                                xpColumn.removeChild(aFromXpColumn);
+                                xpFiltered = xpColumn.innerHTML;
+                                xpFiltered = xpFiltered.replace(/\n/g, ' ');
+                                xpFiltered = xpFiltered.replace(/ /g, '');
+                            }
                         }
-                    }
 
-                    var charmColumn = line.querySelector('td:nth-child(5)');
-                    var aCharmColum = line.querySelector('td:nth-child(5) a');
+                        var charmColumn = line.querySelector('td:nth-child(5)');
+                        var aCharmColum = line.querySelector('td:nth-child(5) a');
 
-                    if (aCharmColum) {
-                        if (charmColumn) {
-                            charmColumn.removeChild(aCharmColum);
-                            charmFiltered = charmColumn.innerHTML;
-                            charmFiltered = charmFiltered.replace(/\n/g, '');
-                            charmFiltered = charmFiltered.replace(/ /g, '');
+                        if (aCharmColum) {
+                            if (charmColumn) {
+                                charmColumn.removeChild(aCharmColum);
+                                charmFiltered = charmColumn.innerHTML;
+                                charmFiltered = charmFiltered.replace(/\n/g, '');
+                                charmFiltered = charmFiltered.replace(/ /g, '');
+                            }
                         }
-                    }
 
-                    return (
-                        {
-                            name: nameMonsterFiltered,
-                            hp: hpFiltered,
-                            xp: xpFiltered,
-                            charm: charmFiltered,
-                            link: linkImgFiltered
-                        }
-                    )
+                        return (
+                            {
+                                type: typeOfMonster,
+                                name: nameMonsterFiltered,
+                                hp: hpFiltered,
+                                xp: xpFiltered,
+                                charm: charmFiltered,
+                                link: linkImgFiltered
+                            }
+                        )
 
-                });
+                    });
 
-                charactersInfoArray.shift();
-                return charactersInfoArray;
-            });
+                    charactersInfoArray.shift();
+                    return charactersInfoArray;
+                }).catch((error) => {
 
-            res.send(monsterInformation);
+                    res.send('Este é o erro encontrado : ' + error);
 
-        })()
+                })
 
-
+            allMonsters = allMonsters.concat(monstersEpecificType);
+            cont++;
+            if (typeOfMonsters.length === cont) {
+                const contentFilePath = './src/generated/monsters.json'
+                const contentString = JSON.stringify(allMonsters);
+                fs.writeFileSync(contentFilePath, contentString);
+                res.json(allMonsters);
+            }
+        });
     },
 
-    testePostMonsters: (req: Request, res: Response) => {
-
-        const { monsterName } = req.body;
-
-        const browserHeaders: any = {
-
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-            'accept-encoding': 'gzip, deflate, br',
-            'accept-language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-            'cache-control': 'max-age=0',
-            'cookie': 'sempre-mostrar-spoilers=true; denakop_freq={}; nvg46575=d06e62ae84e470b4177b4e5d309|0_98; __cfduid=d70d651d54de6b6618935b6826d9f50631618267554; __utmz=183949219.1618294104.80.66.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); __utmc=183949219; __gads=undefined; __utma=183949219.871223446.1608257887.1618336245.1618343462.82; __utmt=1; __cf_bm=f0cdf1ac099ac4aa24aa8ca7556e02b5e01d1fc0-1618343464-1800-AWM2nSJyCVyXes+TI5+ZAQzQiB89TEGQlr+Bnovpp49PGEk5D8X08uOR0x3uYk/aHu8PZVoVcOfsRBU+BFZ94kEBEYsRZVpuweLvSgXL35V30afDTs6nsQKq2kq0AxGmyQ==; __utmb=183949219.1.10.1618343462; __gads=ID=466b6aa7ec3d8a97:T=1618343466:S=ALNI_MaDMOYUCg6utcr8S8TS3Dc7tgqulw',
-            'sec-ch-ua': '"Google Chrome";v="89", "Chromium";v="89", ";Not A Brand";v="99"',
-            'sec-ch-ua-mobile': '?0',
-            'sec-fetch-dest': 'document',
-            'sec-fetch-mode': 'navigate',
-            'sec-fetch-site': 'none',
-            'sec-fetch-user': '?1',
-            'upgrade-insecure-requests': '1',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'
-        }
-
-        const browserHeaders2 = {
-
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'
-        }
+    getDetailsMonster: (req: Request, res: Response) => {
 
 
-        //const monsterKindURL = `https://www.tibiawiki.com.br/wiki/${monsterName}`
+        let imgLink = '';
+        let nameMonster = '';
+        let hp = '';
+        let speed = '';
+        let xp = '';
+        let armor = '';
+        let charms = '';
 
-        const monsterKindURL = `https://www.tibiawiki.com.br/wiki/${monsterName}`;
+        let phisic = '';
+        let earth = '';
+        let fire = '';
+        let death = '';
 
-        const options = {
-            headers: browserHeaders2
-        };
+        let energy = '';
+        let holy = '';
+        let ice = '';
+        let health = '';
 
-        axios.get(monsterKindURL, options)
-            .then(response => {
+        let comportament = '';
+        let localization = '';
+        let sounds = '';
+        let loot = '';
+        let story = '';
+        let story2= '';
 
-                const allDomPage = new JSDOM(response.data.toString()).window.document;
-                const tableMonsters = allDomPage.querySelector('.sortable');
-                const linesFromTableMonster = tableMonsters?.querySelectorAll('tr');
-                var charactersInfoArray: any;
-
-
-                if (linesFromTableMonster) charactersInfoArray = Array.from(linesFromTableMonster).map((line) => {
-
-
-                    let linkImgFiltered: string = '';
-                    let nameMonsterFiltered: string = '';
-                    let hpFiltered: string = '';
-                    let xpFiltered: string = '';
-                    let charmFiltered: string = '';
-
-
-                    var monsterName = line.querySelector('td:nth-child(1) a');
-                    if (monsterName) nameMonsterFiltered = monsterName?.innerHTML;
-
-                    var linkImg = line.querySelector('td:nth-child(2)');
-                    if (linkImg) linkImg = linkImg?.querySelector('img');
-                    if (linkImg) linkImgFiltered = `https://tibiawiki.com.br/${linkImg.getAttribute('src')}`;
+        const { html } = req.body;
 
 
-                    var hpColumn = line.querySelector('td:nth-child(3) ');
-                    var aFromhpColumn = line.querySelector('td:nth-child(3) a');
+        const allDomPage = new JSDOM(html.toString()).window.document;
+        const tableInfoBox = allDomPage.querySelector('.infobox');
+        const rowInformation = tableInfoBox?.querySelector('tr');
+        const imgDrag = rowInformation?.querySelector('td img');
 
-                    if (aFromhpColumn) {
-                        if (hpColumn) {
-                            hpColumn.removeChild(aFromhpColumn);
-                            hpFiltered = hpColumn.innerHTML;
-                            hpFiltered = hpColumn.innerHTML.replace(/\n/g, '');
-                            hpFiltered = hpFiltered.replace(' ', '');
-                        }
-                    }
+        imgLink = `https://www.tibiawiki.com.br${imgDrag?.getAttribute('src')}`;
 
-                    var xpColumn = line.querySelector('td:nth-child(4) ');
-                    var aFromXpColumn = line.querySelector('td:nth-child(4) a');
+        const tableName = rowInformation?.querySelector('table');
 
-                    if (aFromXpColumn) {
-                        if (xpColumn) {
-                            xpColumn.removeChild(aFromXpColumn);
-                            xpFiltered = xpColumn.innerHTML;
-                            xpFiltered = xpFiltered.replace(/\n/g, ' ');
-                            xpFiltered = xpFiltered.replace(/ /g, '');
-                        }
-                    }
+        nameMonster = `${tableName?.querySelector('tr td font')?.innerHTML}`;
 
-                    var charmColumn = line.querySelector('td:nth-child(5)');
-                    var aCharmColum = line.querySelector('td:nth-child(5) a');
+        hp = `${tableName?.querySelector('tr:nth-child(2) td')?.textContent}`;
+        speed = `${tableName?.querySelector('tr:nth-child(2) td:nth-child(2)')?.textContent}`;
+        xp = `${tableName?.querySelector('tr:nth-child(3) td:nth-child(1)')?.textContent}`;
+        armor = `${tableName?.querySelector('tr:nth-child(3) td:nth-child(2)')?.textContent}`;
+        charms = `${tableName?.querySelector('tr:nth-child(4) td:nth-child(1)')?.textContent}`;
 
-                    if (aCharmColum) {
-                        if (charmColumn) {
-                            charmColumn.removeChild(aCharmColum);
-                            charmFiltered = charmColumn.innerHTML;
-                            charmFiltered = charmFiltered.replace(/\n/g, '');
-                            charmFiltered = charmFiltered.replace(/ /g, '');
-                        }
-                    }
+        const tableElementals = rowInformation?.querySelector('td:nth-child(3) table');
 
-                    return (
-                        {
-                            name: nameMonsterFiltered,
-                            hp: hpFiltered,
-                            xp: xpFiltered,
-                            charm: charmFiltered,
-                            link: linkImgFiltered
-                        }
-                    )
+        phisic = `${tableElementals?.querySelector('table:nth-child(1) tr:nth-child(2) td:nth-child(1)')?.textContent}`;
+        phisic = phisic.replace(/Neutro a Físico/g, '').replace(/Forte a Físico/g, '').replace(/Fraco a Físico/g, '')
+        .replace(/Imune a Físico/g, '');
+        earth = `${tableElementals?.querySelector('table:nth-child(1) tr:nth-child(2) td:nth-child(2)')?.textContent}`;
+        earth = earth.replace(/Neutro a Terra/g, '').replace(/Forte a Terra/g, '').replace(/Fraco a Terra/g, '')
+        .replace(/Imune a Terra/g, '');
+        fire = `${tableElementals?.querySelector('table:nth-child(1) tr:nth-child(2) td:nth-child(3)')?.textContent}`;
+        fire = fire.replace(/Neutro a Fogo/g, '').replace(/Forte a Fogo/g, '').replace(/Fraco a Fogo/g, '')
+        .replace(/Imune a Fogo/g, '');
+        death = `${tableElementals?.querySelector('table:nth-child(1) tr:nth-child(2) td:nth-child(4)')?.textContent}`;
+        death = death.replace(/Neutro a Morte/g, '').replace(/Forte a Morte/g, '').replace(/Fraco a Morte/g, '')
+        .replace(/Imune a Morte/g, '');
+        
 
-                });
-
-                charactersInfoArray.shift();
-                res.json(charactersInfoArray);
-            }).catch((error) => {
-
-                res.send('Este é o erro encontrado : ' + error);
-
-            })
-
-    },
+        energy = `${tableElementals?.querySelector('tr:nth-child(2) table tr:nth-child(2) td:nth-child(1)')?.textContent}`;
+        energy = energy.replace(/Neutro a Energia/g, '').replace(/Forte a Energia/g, '').replace(/Fraco a Energia/g, '')
+        .replace(/Imune a Energia/g, '');
+        holy = `${tableElementals?.querySelector('tr:nth-child(2) table tr:nth-child(2) td:nth-child(2)')?.textContent}`;
+        holy = holy.replace(/Neutro a Sagrado/g, '').replace(/Forte a Sagrado/g, '').replace(/Fraco a Sagrado/g, '')
+        .replace(/Imune a Sagrado/g, '');
+        ice = `${tableElementals?.querySelector('tr:nth-child(2) table tr:nth-child(2) td:nth-child(3)')?.textContent}`;
+        ice = ice.replace(/Neutro a Gelo/g, '').replace(/Forte a Gelo/g, '').replace(/Fraco a Gelo/g, '')
+        .replace(/Imune a Gelo/g, '');
+        health = `${tableElementals?.querySelector('tr:nth-child(2) table tr:nth-child(2) td:nth-child(4)')?.textContent}`;
+        health = health.replace(/Neutro a Cura/g, '').replace(/Forte a Cura/g, '').replace(/Fraco a Cura/g, '')
+        .replace(/Imune a Cura/g, '');
 
 
+        comportament = `${tableInfoBox?.querySelector('tbody tr:nth-child(8)')?.textContent}`;
+        localization = `${tableInfoBox?.querySelector('tbody tr:nth-child(9)')?.textContent}`;
+        sounds = `${tableInfoBox?.querySelector('tbody tr:nth-child(11)')?.textContent}`;
+        //loot = `${tableInfoBox?.querySelector('tbody tr:nth-child(12) td:nth-child(2)')?.textContent}`;
+        //story = `${tableInfoBox?.querySelector('tbody tr:nth-child(16)')?.textContent}`;
 
+        //localization = `${tableInfoBox?.querySelector('td[colspan="3"][style="padding-left: 4px;"]')?.innerHTML}`
+        //sounds = `${tableInfoBox?.querySelector('td[colspan="3"][style="padding-left: 4px;"]')?.textContent}`
+        loot = `${tableInfoBox?.querySelector('td[colspan="3"][style="border-bottom:1px dotted #CCCCCC;padding-left: 4px;"]')?.textContent}`;
+        story = `${tableInfoBox?.querySelector('div[style="font-family: Courier New, Courier, Arial Sans Unicode, Arial; color: #000; overflow: auto; white-space: auto;"]')?.textContent}`;
+
+        console.log(localization);
+
+        res.json(
+            {
+                imgLink,
+                hp,
+                xp,
+                speed,
+                armor,
+                charms,
+                phisic,
+                earth,
+                fire,
+                death,
+                energy,
+                holy,
+                ice,
+                health,
+                comportament,
+                localization,
+                sounds,
+                loot,
+                story,
+            }
+        )
+    }
 }
