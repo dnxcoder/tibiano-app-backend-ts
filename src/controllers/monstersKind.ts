@@ -4,8 +4,6 @@ import jsdom from 'jsdom';
 import axios from 'axios';
 import fs from 'fs';
 
-import puppeteer from 'puppeteer';
-
 
 const { JSDOM } = jsdom;
 
@@ -19,7 +17,6 @@ interface iCharacterInformation {
 
 
 export default {
-
 
 
     getMonstersOfKind: (req: Request, res: Response) => {
@@ -315,7 +312,6 @@ export default {
         loot = `${tableInfoBox?.querySelector('td[colspan="3"][style="border-bottom:1px dotted #CCCCCC;padding-left: 4px;"]')?.textContent}`;
         story = `${tableInfoBox?.querySelector('div[style="font-family: Courier New, Courier, Arial Sans Unicode, Arial; color: #000; overflow: auto; white-space: auto;"]')?.textContent}`;
 
-        console.log(localization);
 
         res.json(
             {

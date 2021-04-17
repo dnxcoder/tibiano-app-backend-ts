@@ -12,13 +12,9 @@ router.post('/', (req, res) => { res.send('Here im') });
 router.post('/searchCharBaazar', charBazaarControler.searchCharBaazar);
 
 
-
 router.get('/monstersKind', monstersKind.getMonstersOfKind);
 router.get('/generateJsonTypesOfMonster', monstersKind.generateJsonTypesOfMonster);
 router.post('/getDetailsMonster', monstersKind.getDetailsMonster);
-
-
-
 
 
 
