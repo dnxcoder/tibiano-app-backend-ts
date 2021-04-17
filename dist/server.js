@@ -9,7 +9,7 @@ var body_parser_1 = __importDefault(require("body-parser"));
 var cors_1 = __importDefault(require("cors"));
 var app = express_1.default();
 app.use(cors_1.default());
-app.use(body_parser_1.default.json());
+app.use(body_parser_1.default.json({ limit: '10mb' }));
 app.use(routes_1.default);
 var PORT = process.env.PORT || 8877;
 app.listen(PORT);

@@ -282,7 +282,6 @@ exports.default = {
         //sounds = `${tableInfoBox?.querySelector('td[colspan="3"][style="padding-left: 4px;"]')?.textContent}`
         loot = "" + ((_t = tableInfoBox === null || tableInfoBox === void 0 ? void 0 : tableInfoBox.querySelector('td[colspan="3"][style="border-bottom:1px dotted #CCCCCC;padding-left: 4px;"]')) === null || _t === void 0 ? void 0 : _t.textContent);
         story = "" + ((_u = tableInfoBox === null || tableInfoBox === void 0 ? void 0 : tableInfoBox.querySelector('div[style="font-family: Courier New, Courier, Arial Sans Unicode, Arial; color: #000; overflow: auto; white-space: auto;"]')) === null || _u === void 0 ? void 0 : _u.textContent);
-        console.log(localization);
         res.json({
             imgLink: imgLink,
             hp: hp,
