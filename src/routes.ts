@@ -15,7 +15,7 @@ router.post('/searchCharBaazar', charBazaarControler.searchCharBaazar);
 
 router.get('/monstersKind', monstersKind.getMonstersOfKind);
 router.get('/generateJsonTypesOfMonster', monstersKind.generateJsonTypesOfMonster);
-router.get('/getBoostedCreature', boostedMonster.getBoostedCreatureFromWikiTibia);
+router.post('/getBoostedCreature', boostedMonster.getBoostedCreatureFromWikiTibia);
 router.post('/getDetailsMonster', monstersKind.getDetailsMonster);
 
 

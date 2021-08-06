@@ -13,6 +13,6 @@ router.post('/', function (req, res) { res.send('Here im'); });
 router.post('/searchCharBaazar', charBazaarController_1.default.searchCharBaazar);
 router.get('/monstersKind', monstersKind_1.default.getMonstersOfKind);
 router.get('/generateJsonTypesOfMonster', monstersKind_1.default.generateJsonTypesOfMonster);
-router.get('/getBoostedCreature', boostedMonster_1.default.getBoostedCreatureFromWikiTibia);
+router.post('/getBoostedCreature', boostedMonster_1.default.getBoostedCreatureFromWikiTibia);
 router.post('/getDetailsMonster', monstersKind_1.default.getDetailsMonster);
 exports.default = router;
